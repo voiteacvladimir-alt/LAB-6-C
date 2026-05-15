@@ -1,0 +1,255 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+long long comparatii = 0;
+long long schimbari = 0;
+
+/* Functie pentru afisarea tabloului */
+void afisareTablou(int a[], int n)
+{
+    int i;
+
+    for(i = 0; i < n; i++)
+    {
+        printf("%d ", a[i]);
+    }
+
+    printf("\n");
+}
+
+/* Generare tablou aleatoriu */
+void generareAleator(int a[], int n)
+{
+    int i;
+
+    for(i = 0; i < n; i++)
+    {
+        a[i] = rand() % 100000;
+    }
+}
+
+/* Generare tablou crescator */
+void generareCrescator(int a[], int n)
+{
+    int i;
+
+    for(i = 0; i < n; i++)
+    {
+        a[i] = i;
+    }
+}
+
+/* Generare tablou descrescator */
+void generareDescrescator(int a[], int n)
+{
+    int i;
+
+    for(i = 0; i < n; i++)
+    {
+        a[i] = n - i;
+    }
+}
+
+/* Selection Sort */
+void selectionSort(int a[], int n)
+{
+    int i, j, minIndex, temp;
+
+    comparatii = 0;
+    schimbari = 0;
+
+    for(i = 0; i < n - 1; i++)
+    {
+        minIndex = i;
+
+        for(j = i + 1; j < n; j++)
+        {
+            comparatii++;
+
+            if(a[j] < a[minIndex])
+            {
+                minIndex = j;
+            }
+        }
+
+        if(minIndex != i)
+        {
+            temp = a[i];
+            a[i] = a[minIndex];
+            a[minIndex] = temp;
+
+            schimbari++;
+        }
+    }
+}
+
+/* Functie pentru qsort */
+int compara(const void *a, const void *b)
+{
+    return (*(int*)a - *(int*)b);
+}
+
+/* Analiza pentru Selection Sort */
+void analizaSelection(int a[], int n)
+{
+    clock_t start, finish;
+    double timp;
+
+    start = clock();
+
+    selectionSort(a, n);
+
+    finish = clock();
+
+    timp = (double)(finish - start) / CLOCKS_PER_SEC;
+
+    printf("\n--- Selection Sort ---\n");
+    printf("Numar comparatii: %lld\n", comparatii);
+    printf("Numar schimbari: %lld\n", schimbari);
+    printf("Timp executie: %.6f secunde\n", timp);
+}
+
+/* Analiza pentru qsort */
+void analizaQsort(int a[], int n)
+{
+    clock_t start, finish;
+    double timp;
+
+    start = clock();
+
+    qsort(a, n, sizeof(int), compara);
+
+    finish = clock();
+
+    timp = (double)(finish - start) / CLOCKS_PER_SEC;
+
+    printf("\n--- qsort() ---\n");
+    printf("Timp executie: %.6f secunde\n", timp);
+}
+
+int main()
+{
+    int optiune;
+    int n;
+    int *a;
+
+    srand(time(NULL));
+
+    do
+    {
+        printf("\n========== MENIU ==========\n");
+        printf("1. Tablou demonstrativ\n");
+        printf("2. Tablou aleatoriu\n");
+        printf("3. Tablou sortat crescator\n");
+        printf("4. Tablou sortat descrescator\n");
+        printf("5. Analiza qsort()\n");
+        printf("0. Iesire\n");
+
+        printf("Alege optiunea: ");
+        scanf("%d", &optiune);
+
+        switch(optiune)
+        {
+            case 1:
+            {
+                printf("Introduceti n (5..20): ");
+                scanf("%d", &n);
+
+                a = (int*)malloc(n * sizeof(int));
+
+                generareAleator(a, n);
+
+                printf("\nTabloul initial:\n");
+                afisareTablou(a, n);
+
+                analizaSelection(a, n);
+
+                printf("\nTabloul sortat:\n");
+                afisareTablou(a, n);
+
+                free(a);
+
+                break;
+            }
+
+            case 2:
+            {
+                printf("Introduceti n (10000 / 100000 / 1000000): ");
+                scanf("%d", &n);
+
+                a = (int*)malloc(n * sizeof(int));
+
+                generareAleator(a, n);
+
+                analizaSelection(a, n);
+
+                free(a);
+
+                break;
+            }
+
+            case 3:
+            {
+                printf("Introduceti n (10000 / 100000 / 1000000): ");
+                scanf("%d", &n);
+
+                a = (int*)malloc(n * sizeof(int));
+
+                generareCrescator(a, n);
+
+                analizaSelection(a, n);
+
+                free(a);
+
+                break;
+            }
+
+            case 4:
+            {
+                printf("Introduceti n (10000 / 100000 / 1000000): ");
+                scanf("%d", &n);
+
+                a = (int*)malloc(n * sizeof(int));
+
+                generareDescrescator(a, n);
+
+                analizaSelection(a, n);
+
+                free(a);
+
+                break;
+            }
+
+            case 5:
+            {
+                printf("Introduceti n (10000 / 100000 / 1000000): ");
+                scanf("%d", &n);
+
+                a = (int*)malloc(n * sizeof(int));
+
+                generareAleator(a, n);
+
+                analizaQsort(a, n);
+
+                free(a);
+
+                break;
+            }
+
+            case 0:
+            {
+                printf("Program terminat.\n");
+                break;
+            }
+
+            default:
+            {
+                printf("Optiune invalida!\n");
+            }
+        }
+
+    } while(optiune != 0);
+
+    return 0;
+}
